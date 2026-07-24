@@ -29,11 +29,17 @@ function renderProfile(){
     `).join('') : '<div style="font-size:12px; color:var(--paper-faint);">You haven’t posted anything yet.</div>'}
   `;
 
-  if(!u.publicProfile){
-    body.innerHTML = myPostsHtml + `<div class="private-banner" style="margin-top:14px;"><div class="lock">🔒</div>Your profile is private. Only you can see your watchlist, completed list, ratings, favorite characters, and notes.<br><span style="font-size:11px;">Like Instagram — a private profile can still post publicly. Your community posts and comments stay visible to everyone regardless of this setting.</span></div>`;
-    return;
-  }
+  console.log("Reached here");
 
+if (!u.publicProfile) {
+    console.log("Private profile");
+    body.innerHTML = myPostsHtml + `
+    <div class="private-banner" style="margin-top:14px;">
+        <div class="lock">🔒</div>
+        Your profile is private.
+    </div>`;
+    return;
+}
   const completed = titles.filter(t=>t.completed);
   const watching = titles.filter(t=>!t.completed);
   const favs = [...new Set(titles.filter(t=>t.fav && t.fav!=='—').map(t=>t.fav))];

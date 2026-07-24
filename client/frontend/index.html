@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nexora — track it, talk about it</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Bebas+Neue&family=Unbounded:wght@500;700;800&family=Baloo+2:wght@500;600;700;800&family=Ma+Shan+Zheng&family=Shippori+Mincho:wght@500;600&family=Comfortaa:wght@600;700&family=Cinzel:wght@500;600&family=Archivo+Black&family=Anton&family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ LANDING (LOGIN / SIGNUP) ============ -->
+<div id="view-landing">
+  <div class="glow-blob" style="width:520px;height:520px; top:-140px; left:-120px; background:radial-gradient(circle, var(--gold), transparent 70%);"></div>
+  <div class="glow-blob" style="width:460px;height:460px; top:120px; right:-160px; background:radial-gradient(circle, var(--violet), transparent 70%); animation-delay:-6s;"></div>
+  <div class="glow-blob" style="width:380px;height:380px; bottom:-140px; left:30%; background:radial-gradient(circle, var(--crimson-bright), transparent 70%); animation-delay:-3s;"></div>
+
+  <div class="land-topbar">
+    <div class="theme-toggle">
+      <button class="theme-switch" id="themeSwitchLanding" data-action="toggle-theme" type="button" aria-label="Toggle dark and light mode">
+        <div class="theme-dot" id="themeDotLanding">🌙</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="bulb-strip container" id="bulbStrip"></div>
+  <div class="land-hero">
+    <div class="land-grid">
+      <div>
+        <div class="brand-title">nexora</div>
+        <p class="brand-sub">
+          <span class="hero-line">Tonight's escape? 🌙</span><br>
+          <span class="hero-cats">Anime • K-Drama • Movies • Sitcoms & more</span><br>
+          Pick a universe. We'll remember the rest.
+        </p>
+        <div class="land-tags">
+          <span class="tag-chip">EPISODE TRACKING</span>
+          <span class="tag-chip">FAVORITE CHARACTER PER TITLE</span>
+          <span class="tag-chip">PRIVATE NOTES</span>
+          <span class="tag-chip">SPOILER-BLURRED THREADS</span>
+        </div>
+      </div>
+
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabLogin" data-action="auth-tab" data-arg="login" type="button">Log In</button>
+          <button class="auth-tab" id="tabSignup" data-action="auth-tab" data-arg="signup" type="button">Sign Up</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="loginForm">
+          <div class="field">
+            <label for="loginUser">Username</label>
+            <input id="loginUser" type="text" autocomplete="username" placeholder="e.g. demo" data-enter-action="login">
+          </div>
+          <div class="field">
+            <label for="loginPass">Password</label>
+            <input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••••" data-enter-action="login">
+          </div>
+          <button class="btn btn-primary btn-block" type="button" data-action="login">Enter the glow</button>
+          <div class="auth-error" id="loginError"></div>
+          <div class="auth-hint">Demo account — username <b class="mono">demo</b>, password <b class="mono">demo123</b></div>
+        </div>
+
+        <!-- SIGNUP -->
+        <div id="signupForm" class="hidden">
+          <div class="field">
+            <label for="suUser">Username</label>
+            <input id="suUser" type="text" autocomplete="username" placeholder="pick a handle">
+          </div>
+          <div class="field">
+            <label for="suPass">Password</label>
+            <input id="suPass" type="password" autocomplete="new-password" placeholder="min. 4 characters">
+          </div>
+          <div class="field">
+            <label for="suBio">Bio <span style="text-transform:none;letter-spacing:0;">(optional)</span></label>
+            <textarea id="suBio" rows="2" placeholder="Tell people what you're into..."></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" type="button" data-action="signup">Create account</button>
+          <div class="auth-error" id="signupError"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="view-app" class="hidden">
+  <div class="glow-blob" style="width:480px;height:480px; top:-160px; right:-140px; background:radial-gradient(circle, var(--violet), transparent 70%);"></div>
+  <div class="glow-blob" style="width:420px;height:420px; top:600px; left:-160px; background:radial-gradient(circle, var(--gold), transparent 70%); animation-delay:-5s;"></div>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="row">
+        <span class="logo-mini">nexora</span>
+      </div>
+      <div class="row">
+        <span class="who"><b id="whoUser"></b></span>
+        <button class="icon-btn-bell" data-action="nav" data-arg="notifications" type="button" aria-label="Notifications">
+          🔔<span class="notif-badge hidden" id="notifBadge">0</span>
+        </button>
+        <button class="theme-switch" id="themeSwitchApp" data-action="toggle-theme" type="button" aria-label="Toggle dark and light mode">
+          <div class="theme-dot" id="themeDotApp">🌙</div>
+        </button>
+        <button class="btn btn-ghost btn-small" data-action="logout" type="button">Log out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---- TRACKER ---- -->
+  <section class="view-section" id="section-tracker">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Your Watchlist</div>
+        <div class="section-desc">Track anything — episodic or single-watch — with a favorite character and private notes per title.</div>
+      </div>
+      <button class="btn btn-crimson" data-action="toggle-add-form" type="button">+ Add Title</button>
+    </div>
+
+    <div class="form-card hidden" id="addFormCard">
+      <div class="form-grid">
+        <div class="field"><label>Title</label><input id="fTitle" type="text" placeholder="e.g. Jujutsu Kaisen"></div>
+        <div class="field"><label>Type</label>
+          <select id="fType">
+            <option>Hollywood</option><option>K-Drama</option><option>Anime</option><option>Sitcoms</option>
+            <option>C-Drama</option><option>J-Drama</option><option>Thai Drama</option><option>Turkish Dizi</option>
+            <option>Spanish Series</option><option>Korean Movies</option><option>Japanese Movies</option><option>Web Series</option>
+          </select>
+        </div>
+        <div class="field"><label>Format</label>
+          <select id="fFormat" data-action="format-change">
+            <option value="episodic">Episodic (track episodes)</option>
+            <option value="single">Single-watch (film)</option>
+          </select>
+        </div>
+        <div class="field" id="fEpWrap"><label>Total Episodes</label><input id="fTotalEp" type="number" min="1" value="12"></div>
+        <div class="field"><label>Favorite Character <span style="text-transform:none;letter-spacing:0;">(optional)</span></label><input id="fFav" type="text" placeholder="e.g. Zoro"></div>
+        <div class="field"><label>Priority</label>
+          <select id="fPriority"><option>High</option><option selected>Medium</option><option>Low</option></select>
+        </div>
+        <div class="field"><label>Status</label>
+          <select id="fStatus"><option>Watching</option><option>Plan to Watch</option><option>On Hold</option><option>Dropped</option></select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:6px;">
+        <button class="btn btn-primary" data-action="add-title" type="button">Add to tracker</button>
+        <button class="btn btn-ghost" data-action="toggle-add-form" type="button">Cancel</button>
+      </div>
+    </div>
+
+    <div class="pill-row" id="statusPills"></div>
+    <div id="trackerList"></div>
+  </section>
+
+  <!-- ---- COMPLETED ---- -->
+  <section class="view-section hidden" id="section-completed">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Completed</div>
+        <div class="section-desc">Titles you've finished, with your ratings.</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="statTitles">0</div><div class="stat-label">Titles Completed</div></div>
+      <div class="stat-card"><div class="stat-num" id="statEpisodes">0</div><div class="stat-label">Episodes Watched</div></div>
+      <div class="stat-card"><div class="stat-num" id="statAvgRating">–</div><div class="stat-label">Average Rating</div></div>
+    </div>
+    <div id="completedList"></div>
+  </section>
+
+  <!-- ---- COMMUNITY ---- -->
+  <section class="view-section hidden" id="section-community">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Community</div>
+        <div class="section-desc">Separate spaces per category — post, vote, and discuss without spoiling anyone.</div>
+      </div>
+      <button class="btn btn-crimson" data-action="toggle-new-post" type="button">+ New Post</button>
+    </div>
+
+    <div class="cat-tabs" id="catTabs"></div>
+    <div class="sort-row">
+      <button class="pill active" id="sortNewBtn" data-action="sort" data-arg="new" type="button">New</button>
+      <button class="pill" id="sortTopBtn" data-action="sort" data-arg="top" type="button">Top</button>
+    </div>
+
+    <div class="form-card hidden" id="newPostCard">
+      <div class="field"><label>Tagged Title</label><input id="pTitle" type="text" placeholder="e.g. One Piece"></div>
+      <div class="field"><label>Post</label><textarea id="pBody" rows="3" placeholder="What's on your mind about this title?"></textarea></div>
+      <div class="field">
+        <label>Image <span style="text-transform:none;letter-spacing:0;">(optional)</span></label>
+        <input type="file" id="pImageInput" accept="image/*" class="hidden">
+        <button class="btn btn-ghost btn-small" id="pImageBtn" data-action="pick-image" type="button">📷 Add image</button>
+        <div class="image-preview-wrap hidden" id="imagePreviewWrap">
+          <img id="imagePreview" alt="Selected image preview">
+          <button class="image-remove-btn" data-action="remove-image" type="button" aria-label="Remove image">✕</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Genre tags <span style="text-transform:none;letter-spacing:0;">(optional, pick any)</span></label>
+        <div class="genre-chip-row" id="genrePicker"></div>
+      </div>
+      <div class="row wrap" style="margin:6px 0 14px;">
+        <label class="row" style="font-size:12px; color:var(--paper-dim);">
+          <input type="checkbox" id="pSpoiler"> Contains spoilers
+        </label>
+        <label class="row" style="font-size:12px; color:var(--paper-dim);">
+          <input type="checkbox" id="pProgress"> Show my current progress
+        </label>
+      </div>
+      <div class="row">
+        <button class="btn btn-primary" data-action="add-post" type="button">Post</button>
+        <button class="btn btn-ghost" data-action="toggle-new-post" type="button">Cancel</button>
+      </div>
+    </div>
+
+    <div id="postList"></div>
+
+    <div class="cat-heading cat-heading-bottom" id="catHeading">Anime</div>
+  </section>
+
+  <!-- ---- NOTIFICATIONS ---- -->
+  <section class="view-section hidden" id="section-notifications">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Notifications</div>
+        <div class="section-desc">Comments people leave on your posts land here.</div>
+      </div>
+      <button class="btn btn-ghost btn-small" data-action="mark-all-read" type="button">Mark all read</button>
+    </div>
+    <div id="notifList"></div>
+  </section>
+
+  <!-- ---- PROFILE ---- -->
+  <section class="view-section hidden" id="section-profile">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Profile</div>
+        <div class="section-desc">One toggle controls your whole profile. Notes never leave your tracker.</div>
+      </div>
+    </div>
+    <div class="profile-card">
+      <div class="profile-head">
+        <div class="row">
+          <div class="avatar-ring"><div class="avatar-inner" id="profileInitial"></div></div>
+          <div>
+            <div style="font-weight:800; font-size:18px;" id="profileName"></div>
+            <div style="font-size:12.5px; color:var(--paper-dim);" id="profileBio"></div>
+          </div>
+        </div>
+        <div class="toggle">
+          <span style="font-size:12px; color:var(--paper-dim);" id="visLabel">Private</span>
+          <button class="switch" id="visSwitch" data-action="toggle-visibility" type="button"><div class="switch-dot"></div></button>
+        </div>
+      </div>
+      <div id="profileBody"></div>
+    </div>
+  </section>
+
+  <div class="icon-nav" id="iconNav">
+    <button class="icon-nav-btn" data-action="nav" data-arg="tracker" type="button" aria-label="Tracker">🎬</button>
+    <button class="icon-nav-btn" data-action="nav" data-arg="completed" type="button" aria-label="Completed">✅</button>
+    <button class="icon-nav-fab" data-action="quick-post" type="button" aria-label="New post">+</button>
+    <button class="icon-nav-btn" data-action="nav" data-arg="community" type="button" aria-label="Community">💬</button>
+    <button class="icon-nav-btn" data-action="nav" data-arg="profile" type="button" aria-label="Profile">👤</button>
+  </div>
+</div>
+
+
+<script src="js/data.js"></script>
+<script src="js/helpers.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/tracker.js"></script>
+<script src="js/completed.js"></script>
+<script src="js/community.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/events.js"></script>
+</body>
+</html>

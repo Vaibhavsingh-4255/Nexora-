@@ -1,5 +1,5 @@
 /* NEXORA — data.js
-   State, seed data (titles, posts, notifications) — the app's in-memory database for this session. */
+   State, seed data (titles, posts, notifications, follows, messages) — the app's in-memory database for this session. */
 
 /* ===================== IN-MEMORY DATA LAYER ===================== *
  * Everything lives in JS variables for this session only — nothing
@@ -11,7 +11,14 @@ let idCounter = 1000;
 const nextId = () => idCounter++;
 
 const users = {
-  demo: { username:'demo', password:'demo123', bio:'Currently juggling three K-dramas and a Turkish dizi. Send help (and recs).', publicProfile:true }
+  demo: {
+    username:'demo', password:'demo123',
+    bio:'Currently juggling three K-dramas and a Turkish dizi. Send help (and recs).',
+    publicProfile:true, followers:['reelwatcher','nightowl_ott'], following:['popcorn_diaries']
+  },
+  reelwatcher:     { username:'reelwatcher',     password:'demo123', bio:'Always mid-rewatch of something.', publicProfile:true, followers:[], following:['demo'] },
+  nightowl_ott:    { username:'nightowl_ott',    password:'demo123', bio:'Late night streaming, spoiler-free zone.', publicProfile:true, followers:[], following:['demo'] },
+  popcorn_diaries: { username:'popcorn_diaries', password:'demo123', bio:'Reviews with too many exclamation marks.', publicProfile:false, followers:['demo'], following:[] },
 };
 
 const userTitles = { demo: [] };
@@ -22,10 +29,11 @@ const CATEGORIES = [
 ];
 const GENRES = ['Action','Romance','Comedy','Thriller','Fantasy','Drama','Mystery','Horror','Slice of Life','Sci-Fi','Sports'];
 let selectedGenres = [];
-let activeCategory = 'Anime';
+let postVisibility = 'public';
+let activeCategory = 'For You';
 let activeSort = 'new';
 let activeStatusFilter = 'All';
-const VIEW_ORDER = ['tracker','completed','community','notifications','profile'];
+const VIEW_ORDER = ['tracker','completed','community','messages','notifications','profile'];
 
 function mkTitle({name,type,format,totalEp,currentEp,fav,priority,status,notes}){
   return { id:nextId(), name, type, format, totalEp:Number(totalEp), currentEp:Number(currentEp), fav, priority, status, notes:notes||'', completed:false, rating:null };
@@ -73,11 +81,11 @@ function updateNotifBadge(){
     badge.classList.toggle('hidden', count===0);
   }
 }
-function mkPost(category,title,author,body,spoiler,showProgress,seedVotes,genres){
+function mkPost(category,title,author,body,spoiler,showProgress,seedVotes,genres,visibility){
   return {
     id:nextId(), category, title, author, body, spoiler, showProgress,
     votes: seedVotes, myVote:0, createdAt: Date.now() - Math.floor(Math.random()*1000000),
-    revealed:false, genres: genres || [],
+    revealed:false, genres: genres || [], visibility: visibility || 'public',
     comments: seedComments()
   };
 }
@@ -106,9 +114,32 @@ function seedPosts(){
     mkPost('Korean Movies','Parasite','demo','Every rewatch I notice another detail in the production design foreshadowing the ending.', true, false, 176, ['Thriller','Drama']),
     mkPost('Japanese Movies','Departures','demo','A quiet, devastating film that never gets the conversation it deserves.', false, false, 41, ['Drama']),
     mkPost('Web Series','The Family Man','demo','Manoj Bajpayee carries every single scene he is in, underrated performance.', false, false, 39, ['Thriller','Drama']),
+    mkPost('Anime','Attack on Titan','demo','Only telling my followers this but the ending still lives in my head rent free.', false, false, 12, ['Action','Drama'], 'followers'),
+    mkPost('Anime','Demon Slayer','reelwatcher','The animation budget for this show should be studied in film schools honestly.', false, false, 58, ['Action','Fantasy']),
+  );
+}
+
+/* ---- Messaging: DMs and groups ---- */
+const conversations = [];
+function seedConversations(){
+  conversations.push(
+    {
+      id:nextId(), type:'dm', participants:['demo','reelwatcher'],
+      messages:[
+        {id:nextId(), author:'reelwatcher', text:'have you started the new season yet??', createdAt: Date.now()-1000*60*40},
+        {id:nextId(), author:'demo', text:'not yet, no spoilers 😭', createdAt: Date.now()-1000*60*35},
+      ]
+    },
+    {
+      id:nextId(), type:'group', name:'weekend watch club', participants:['demo','reelwatcher','nightowl_ott'],
+      messages:[
+        {id:nextId(), author:'nightowl_ott', text:'movie night saturday?', createdAt: Date.now()-1000*60*200},
+        {id:nextId(), author:'reelwatcher', text:'im in, my pick this time', createdAt: Date.now()-1000*60*190},
+      ]
+    }
   );
 }
 
 seedDemoData();
 seedPosts();
-
+seedConversations();

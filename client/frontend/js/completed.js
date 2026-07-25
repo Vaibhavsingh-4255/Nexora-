@@ -11,7 +11,7 @@ function renderCompleted(){
   const avg = rated.length ? (rated.reduce((s,t)=>s+t.rating,0)/rated.length).toFixed(1) : '–';
   document.getElementById('statAvgRating').textContent = avg;
   const el = document.getElementById('completedList');
-  if(list.length===0){ el.innerHTML = `<div class="empty">No completed titles yet ? ... finish something and mark it done.</div>`; return; }
+  if(list.length===0){ el.innerHTML = `<div class="empty">No completed titles yet — finish something and mark it done.</div>`; return; }
 
   el.innerHTML = list.map(t=>`
     <div class="title-card" data-type="${t.type}">

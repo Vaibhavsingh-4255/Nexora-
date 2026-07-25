@@ -32,7 +32,7 @@ function handleSignup(){
   if(!u || !p){ err.textContent = 'Username and password are both required.'; return; }
   if(p.length < 4){ err.textContent = 'Password needs at least 4 characters.'; return; }
   if(users[u]){ err.textContent = 'That username is already taken.'; return; }
-  users[u] = { username:u, password:p, bio: bio || 'New to nexora.', publicProfile:false };
+  users[u] = { username:u, password:p, bio: bio || 'New to nexora.', publicProfile:false, followers:[], following:[] };
   userTitles[u] = [];
   err.textContent = '';
   currentUser = u;
@@ -59,5 +59,6 @@ function enterApp(){
   switchView('community');
   renderProfile();
   updateNotifBadge();
+  updateMsgBadge();
 }
 

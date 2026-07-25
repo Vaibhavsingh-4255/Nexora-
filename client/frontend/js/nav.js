@@ -2,8 +2,11 @@
    Section switching + swipe-between-sections gesture handling. */
 
 /* ===================== NAV ===================== */
+const EXTRA_SECTIONS = ['user-profile','followlist'];
+const ALL_SECTIONS = [...VIEW_ORDER, ...EXTRA_SECTIONS];
+
 function switchView(view){
-  VIEW_ORDER.forEach(v=>{
+  ALL_SECTIONS.forEach(v=>{
     document.getElementById('section-'+v).classList.toggle('hidden', v!==view);
   });
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.arg===view));
@@ -12,8 +15,11 @@ function switchView(view){
   if(view==='tracker') renderTracker();
   if(view==='completed') renderCompleted();
   if(view==='community') renderCommunity();
+  if(view==='messages') renderMessages();
   if(view==='notifications') renderNotifications();
   if(view==='profile') renderProfile();
+  if(view==='user-profile') renderUserProfile();
+  if(view==='followlist') renderFollowList();
 }
 
 function quickNewPost(){
@@ -27,13 +33,15 @@ function quickNewPost(){
 
 /* ===================== SWIPE BETWEEN SECTIONS ===================== */
 let touchStartX = 0, touchStartY = 0, touchActive = false;
-const SWIPE_IGNORE_SELECTOR = '.cat-tabs, .pill-row, .stars, input, textarea, select, .genre-chip-row, .form-grid';
+const SWIPE_IGNORE_SELECTOR = '.cat-tabs, .pill-row, .stars, input, textarea, select, .genre-chip-row, .form-grid, .search-row';
 
 function currentView(){
-  return VIEW_ORDER.find(v => !document.getElementById('section-'+v).classList.contains('hidden')) || 'tracker';
+  return ALL_SECTIONS.find(v => !document.getElementById('section-'+v).classList.contains('hidden')) || 'tracker';
 }
 function swipeToView(direction){
-  const idx = VIEW_ORDER.indexOf(currentView());
+  const view = currentView();
+  if(!VIEW_ORDER.includes(view)) return; // no swiping while on a sub-view (profile detail, follow list)
+  const idx = VIEW_ORDER.indexOf(view);
   const nextIdx = idx + direction;
   if(nextIdx < 0 || nextIdx >= VIEW_ORDER.length) return;
   switchView(VIEW_ORDER[nextIdx]);
@@ -54,4 +62,3 @@ document.addEventListener('touchend', function(e){
   if(Math.abs(dx) < 65 || Math.abs(dy) > 60) return;
   swipeToView(dx < 0 ? 1 : -1);
 }, {passive:true});
-

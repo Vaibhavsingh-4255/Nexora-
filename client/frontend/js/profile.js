@@ -13,6 +13,7 @@ function renderProfile(){
   document.getElementById('profileBio').textContent = u.bio;
   document.getElementById('visLabel').textContent = u.publicProfile ? 'Public' : 'Private';
   document.getElementById('visSwitch').classList.toggle('on', u.publicProfile);
+  renderFollowStatsRow('followStatsRow', currentUser, true);
 
   const titles = userTitles[currentUser];
   const body = document.getElementById('profileBody');
@@ -29,10 +30,7 @@ function renderProfile(){
     `).join('') : '<div style="font-size:12px; color:var(--paper-faint);">You haven’t posted anything yet.</div>'}
   `;
 
-  console.log("Reached here");
-
 if (!u.publicProfile) {
-    console.log("Private profile");
     body.innerHTML = myPostsHtml + `
     <div class="private-banner" style="margin-top:14px;">
         <div class="lock">🔒</div>

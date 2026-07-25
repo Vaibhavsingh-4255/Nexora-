@@ -47,6 +47,20 @@ document.addEventListener('click', function(e){
     case 'quick-post': quickNewPost(); break;
     case 'pick-image': pickImage(); break;
     case 'remove-image': removeImage(); break;
+    case 'post-visibility': setPostVisibility(arg); break;
+    case 'view-profile': viewProfile(arg); break;
+    case 'back-from-user-profile': backFromUserProfile(); break;
+    case 'toggle-follow': toggleFollow(); break;
+    case 'open-follow-list': openFollowList(arg, el.dataset.username); break;
+    case 'back-from-follow-list': backFromFollowList(); break;
+    case 'message-user': messageUser(); break;
+    case 'new-group': startNewGroup(); break;
+    case 'cancel-new-group': cancelNewGroup(); break;
+    case 'toggle-group-member': toggleGroupMember(arg); break;
+    case 'create-group': createGroup(); break;
+    case 'open-conversation': openConversation(id); break;
+    case 'back-to-conversations': backToConversationList(); break;
+    case 'send-message': sendMessage(); break;
   }
 });
 
@@ -62,12 +76,22 @@ document.addEventListener('change', function(e){
   }
 });
 
+document.addEventListener('input', function(e){
+  if(e.target.id === 'catSearch'){ handleCategorySearch(e.target.value); }
+});
+
 document.addEventListener('keydown', function(e){
   if(e.key !== 'Enter') return;
   const el = e.target;
+  if(el.id === 'catSearch'){ e.preventDefault(); submitCategorySearch(el.value); return; }
   if(!el.dataset) return;
   if(el.dataset.enterAction === 'login'){ e.preventDefault(); handleLogin(); }
   if(el.dataset.enterAction === 'add-comment'){ e.preventDefault(); addComment(Number(el.dataset.id)); }
+  if(el.dataset.enterAction === 'send-message'){ e.preventDefault(); sendMessage(); }
+});
+
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.search-row')) hideSearchResults();
 });
 
 /* bulb strip render */

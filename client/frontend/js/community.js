@@ -1,5 +1,5 @@
 /* NEXORA — community.js
-   Community feed: categories, posts, genre tags, voting, comments. */
+   Community feed: For You default feed, categories, search, genre tags, voting, comments, post visibility. */
 
 /* ===================== COMMUNITY ===================== */
 function toggleNewPostForm(){ document.getElementById('newPostCard').classList.toggle('hidden'); }
@@ -9,25 +9,45 @@ function setSort(s){
   document.getElementById('sortTopBtn').classList.toggle('active', s==='top');
   renderCommunity();
 }
-function setCategory(c){ activeCategory = c; renderCommunity(); }
+function setCategory(c){
+  activeCategory = c;
+  document.getElementById('catSearch').value = '';
+  hideSearchResults();
+  renderCommunity();
+}
+function setPostVisibility(v){
+  postVisibility = v;
+  document.getElementById('visPublicBtn').classList.toggle('active', v==='public');
+  document.getElementById('visFollowersBtn').classList.toggle('active', v==='followers');
+}
+
+function canSeePost(p){
+  if(p.visibility !== 'followers') return true;
+  if(p.author === currentUser) return true;
+  const author = users[p.author];
+  return !!(author && author.followers && author.followers.includes(currentUser));
+}
 
 function addPost(){
   const title = document.getElementById('pTitle').value.trim();
   const body = document.getElementById('pBody').value.trim();
+  const category = document.getElementById('pCategory').value;
   if(!title || !body){ alert('Add a title and some post content.'); return; }
   posts.unshift({
-    id:nextId(), category: activeCategory, title, author: currentUser, body,
+    id:nextId(), category, title, author: currentUser, body,
     spoiler: document.getElementById('pSpoiler').checked,
     showProgress: document.getElementById('pProgress').checked,
     votes: 0, myVote:0, createdAt: Date.now(), revealed:false, comments:[],
     genres: [...selectedGenres],
-    image: selectedImage
+    image: selectedImage,
+    visibility: postVisibility
   });
   document.getElementById('pTitle').value='';
   document.getElementById('pBody').value='';
   document.getElementById('pSpoiler').checked=false;
   document.getElementById('pProgress').checked=false;
   selectedGenres = [];
+  setPostVisibility('public');
   removeImage();
   toggleNewPostForm();
   renderCommunity();
@@ -91,8 +111,22 @@ function renderGenrePicker(){
     `<button class="genre-chip ${selectedGenres.includes(g)?'active':''}" data-action="toggle-genre" data-arg="${g}" type="button">${g}</button>`
   ).join('');
 }
+function renderCategoryPicker(){
+  const el = document.getElementById('pCategory');
+  if(!el) return;
+  const preselect = CATEGORIES.includes(activeCategory) ? activeCategory : myTopCategory();
+  el.innerHTML = CATEGORIES.map(c=>`<option ${c===preselect?'selected':''}>${c}</option>`).join('');
+}
+function myTopCategory(){
+  const mine = userTitles[currentUser] || [];
+  const counts = {};
+  mine.forEach(t=>{ counts[t.type] = (counts[t.type]||0) + 1; });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  return sorted.length ? sorted[0][0] : CATEGORIES[0];
+}
 
 const CAT_COLORS = {
+  'For You':        ['#8B7FD9','#3FC9B0'],
   'Hollywood':      ['#E0263F','#F2B84B'],
   'K-Drama':        ['#FFB6D9','#B79CFF'],
   'Anime':          ['#FF2E88','#00D4FF'],
@@ -107,6 +141,32 @@ const CAT_COLORS = {
   'Web Series':     ['#3AA6FF','#8fd7ff']
 };
 
+/* ---- Search: type a category name, jump straight to it ---- */
+function handleCategorySearch(query){
+  const q = query.trim().toLowerCase();
+  const resultsEl = document.getElementById('searchResults');
+  if(!q){ hideSearchResults(); return; }
+  const matches = CATEGORIES.filter(c => c.toLowerCase().includes(q));
+  if(matches.length === 0){
+    resultsEl.innerHTML = `<div class="search-empty">No category matches "${escapeHtml(query)}"</div>`;
+    resultsEl.classList.remove('hidden');
+    return;
+  }
+  resultsEl.innerHTML = matches.map(c =>
+    `<button class="search-result-item" data-action="category" data-arg="${c}" type="button">${c}</button>`
+  ).join('');
+  resultsEl.classList.remove('hidden');
+}
+function hideSearchResults(){
+  document.getElementById('searchResults').classList.add('hidden');
+}
+function submitCategorySearch(query){
+  const q = query.trim().toLowerCase();
+  if(!q) return;
+  const match = CATEGORIES.find(c => c.toLowerCase().includes(q));
+  if(match) setCategory(match);
+}
+
 function renderCommunity(){
   const section = document.getElementById('section-community');
   section.setAttribute('data-cat-theme', activeCategory);
@@ -114,17 +174,32 @@ function renderCommunity(){
   section.style.setProperty('--cat-1', c1);
   section.style.setProperty('--cat-2', c2);
   document.getElementById('catHeading').textContent = activeCategory;
+  document.getElementById('communityDesc').textContent = activeCategory === 'For You'
+    ? 'A mix leaning toward what you track — search or tap a category to narrow it down.'
+    : `Browsing ${activeCategory} — tap For You to go back to your personalized mix.`;
 
-  document.getElementById('catTabs').innerHTML = CATEGORIES.map(c=>
+  document.getElementById('catTabs').innerHTML = ['For You', ...CATEGORIES].map(c=>
     `<button class="cat-tab ${activeCategory===c?'active':''}" data-action="category" data-arg="${c}" type="button">${c}</button>`
   ).join('');
   renderGenrePicker();
+  renderCategoryPicker();
 
-  let list = posts.filter(p=>p.category===activeCategory);
-  list = activeSort==='top' ? [...list].sort((a,b)=>b.votes-a.votes) : [...list].sort((a,b)=>b.createdAt-a.createdAt);
+  let list;
+  if(activeCategory === 'For You'){
+    const myCats = new Set((userTitles[currentUser]||[]).map(t=>t.type));
+    list = posts.filter(canSeePost);
+    list = activeSort==='top' ? [...list].sort((a,b)=>b.votes-a.votes) : [...list].sort((a,b)=>b.createdAt-a.createdAt);
+    list.sort((a,b) => (myCats.has(b.category)?1:0) - (myCats.has(a.category)?1:0));
+  } else {
+    list = posts.filter(p => p.category===activeCategory && canSeePost(p));
+    list = activeSort==='top' ? [...list].sort((a,b)=>b.votes-a.votes) : [...list].sort((a,b)=>b.createdAt-a.createdAt);
+  }
 
   const el = document.getElementById('postList');
-  if(list.length===0){ el.innerHTML = `<div class="empty">No posts in ${activeCategory} yet — be the first.</div>`; return; }
+  if(list.length===0){
+    el.innerHTML = `<div class="empty">${activeCategory==='For You' ? 'No posts to show yet — follow people or browse a category.' : `No posts in ${activeCategory} yet — be the first.`}</div>`;
+    return;
+  }
 
   el.innerHTML = list.map(p=>{
     const myProgress = p.showProgress ? progressChipFor(p.author, p.title) : '';
@@ -132,10 +207,14 @@ function renderCommunity(){
     const bodyHtml = p.spoiler && !p.revealed
       ? `<div class="spoiler-wrap"><div class="spoiler-blur">${escapeHtml(p.body)}${imageHtml}</div></div><button class="icon-btn spoiler-btn" data-action="reveal-spoiler" data-id="${p.id}" type="button">Reveal spoiler</button>`
       : `<div class="post-body">${escapeHtml(p.body)}</div>${imageHtml}`;
+    const catChip = activeCategory === 'For You' ? `<span class="progress-chip">${escapeHtml(p.category)}</span>` : '';
+    const authorLink = p.author === currentUser
+      ? `<span class="post-author-link">u/${escapeHtml(p.author)}</span>`
+      : `<button class="post-author-link" data-action="view-profile" data-arg="${escapeHtml(p.author)}" type="button">u/${escapeHtml(p.author)}</button>`;
     return `
     <div class="post-card">
       <div class="post-head">
-        <span>u/${escapeHtml(p.author)} · <span class="post-title-tag">${escapeHtml(p.title)}</span>${myProgress}${p.spoiler?' · <span style="color:var(--crimson-bright)">SPOILER</span>':''}</span>
+        <span>${authorLink} · <span class="post-title-tag">${escapeHtml(p.title)}</span>${catChip}${myProgress}${p.spoiler?' · <span style="color:var(--crimson)">SPOILER</span>':''}${p.visibility==='followers'?' · <span class="followers-only-tag">🔒 followers</span>':''}</span>
         <span>${timeAgo(p.createdAt)}</span>
       </div>
       ${bodyHtml}
@@ -202,4 +281,3 @@ function voteComment(postId, commentId, dir){
   else{ c.votes += dir - c.myVote; c.myVote = dir; }
   renderCommunity();
 }
-

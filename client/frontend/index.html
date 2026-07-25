@@ -175,9 +175,13 @@
     <div class="section-head">
       <div>
         <div class="section-title">Community</div>
-        <div class="section-desc">Separate spaces per category — post, vote, and discuss without spoiling anyone.</div>
+        <div class="section-desc" id="communityDesc">Your personalized mix — search or tap a category to browse a specific one.</div>
       </div>
-      <button class="btn btn-crimson" data-action="toggle-new-post" type="button">+ New Post</button>
+    </div>
+
+    <div class="search-row">
+      <input type="text" id="catSearch" class="search-input" placeholder="Search a category... e.g. Anime" autocomplete="off">
+      <div class="search-results hidden" id="searchResults"></div>
     </div>
 
     <div class="cat-tabs" id="catTabs"></div>
@@ -188,6 +192,9 @@
 
     <div class="form-card hidden" id="newPostCard">
       <div class="field"><label>Tagged Title</label><input id="pTitle" type="text" placeholder="e.g. One Piece"></div>
+      <div class="field"><label>Category</label>
+        <select id="pCategory"></select>
+      </div>
       <div class="field"><label>Post</label><textarea id="pBody" rows="3" placeholder="What's on your mind about this title?"></textarea></div>
       <div class="field">
         <label>Image <span style="text-transform:none;letter-spacing:0;">(optional)</span></label>
@@ -201,6 +208,13 @@
       <div class="field">
         <label>Genre tags <span style="text-transform:none;letter-spacing:0;">(optional, pick any)</span></label>
         <div class="genre-chip-row" id="genrePicker"></div>
+      </div>
+      <div class="field">
+        <label>Who can see this post?</label>
+        <div class="visibility-row">
+          <button class="pill active" id="visPublicBtn" data-action="post-visibility" data-arg="public" type="button">🌍 Public</button>
+          <button class="pill" id="visFollowersBtn" data-action="post-visibility" data-arg="followers" type="button">🔒 Followers only</button>
+        </div>
       </div>
       <div class="row wrap" style="margin:6px 0 14px;">
         <label class="row" style="font-size:12px; color:var(--paper-dim);">
@@ -218,7 +232,7 @@
 
     <div id="postList"></div>
 
-    <div class="cat-heading cat-heading-bottom" id="catHeading">Anime</div>
+    <div class="cat-heading cat-heading-bottom" id="catHeading">For You</div>
   </section>
 
   <!-- ---- NOTIFICATIONS ---- -->
@@ -255,8 +269,54 @@
           <button class="switch" id="visSwitch" data-action="toggle-visibility" type="button"><div class="switch-dot"></div></button>
         </div>
       </div>
+      <div class="follow-stats-row" id="followStatsRow"></div>
       <div id="profileBody"></div>
     </div>
+  </section>
+
+  <!-- ---- FOLLOWERS / FOLLOWING LIST ---- -->
+  <section class="view-section hidden" id="section-followlist">
+    <div class="section-head">
+      <button class="btn btn-ghost btn-small" data-action="back-from-follow-list" type="button">← Back</button>
+    </div>
+    <div class="section-title" id="followListTitle" style="margin-bottom:14px;">Followers</div>
+    <div id="followListBody"></div>
+  </section>
+
+  <!-- ---- VIEW ANOTHER USER'S PROFILE ---- -->
+  <section class="view-section hidden" id="section-user-profile">
+    <div class="section-head">
+      <button class="btn btn-ghost btn-small" data-action="back-from-user-profile" type="button">← Back</button>
+    </div>
+    <div class="profile-card">
+      <div class="profile-head">
+        <div class="row">
+          <div class="avatar-ring"><div class="avatar-inner" id="uProfileInitial"></div></div>
+          <div>
+            <div style="font-weight:800; font-size:18px;" id="uProfileName"></div>
+            <div style="font-size:12.5px; color:var(--paper-dim);" id="uProfileBio"></div>
+          </div>
+        </div>
+      </div>
+      <div class="follow-stats-row" id="uFollowStatsRow"></div>
+      <div class="row" style="margin:14px 0 4px; gap:10px;">
+        <button class="btn btn-primary btn-small" id="followActionBtn" data-action="toggle-follow" type="button">Follow</button>
+        <button class="btn btn-ghost btn-small" data-action="message-user" type="button">✉️ Message</button>
+      </div>
+      <div id="uProfileBody"></div>
+    </div>
+  </section>
+
+  <!-- ---- MESSAGES ---- -->
+  <section class="view-section hidden" id="section-messages">
+    <div class="section-head">
+      <div>
+        <div class="section-title" id="messagesTitle">Messages</div>
+        <div class="section-desc" id="messagesDesc">DMs and groups with people you follow.</div>
+      </div>
+      <button class="btn btn-crimson btn-small" data-action="new-group" type="button">+ Group</button>
+    </div>
+    <div id="messagesBody"></div>
   </section>
 
   <div class="icon-nav" id="iconNav">
@@ -264,6 +324,9 @@
     <button class="icon-nav-btn" data-action="nav" data-arg="completed" type="button" aria-label="Completed">✅</button>
     <button class="icon-nav-fab" data-action="quick-post" type="button" aria-label="New post">+</button>
     <button class="icon-nav-btn" data-action="nav" data-arg="community" type="button" aria-label="Community">💬</button>
+    <button class="icon-nav-btn" data-action="nav" data-arg="messages" type="button" aria-label="Messages">
+      ✉️<span class="icon-nav-badge hidden" id="msgBadgeNav">0</span>
+    </button>
     <button class="icon-nav-btn" data-action="nav" data-arg="profile" type="button" aria-label="Profile">👤</button>
   </div>
 </div>
@@ -279,6 +342,8 @@
 <script src="js/community.js"></script>
 <script src="js/notifications.js"></script>
 <script src="js/profile.js"></script>
+<script src="js/follow.js"></script>
+<script src="js/messages.js"></script>
 <script src="js/events.js"></script>
 </body>
 </html>

@@ -174,7 +174,6 @@
     padding: 20px 22px 20px 26px; box-shadow: 0 12px 30px -18px rgba(0,0,0,0.4);
   }
   .title-card::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:5px; }
-  .title-card[data-type="For You"]{ --tc1:#f884d5; --tc2:#f74444; }
   .title-card[data-type="Hollywood"]{ --tc1:#E0263F; --tc2:#2a1a1a; }
   .title-card[data-type="K-Drama"]{ --tc1:#FFB6D9; --tc2:#B79CFF; }
   .title-card[data-type="Anime"]{ --tc1:#FF2E88; --tc2:#00D4FF; }
@@ -232,8 +231,6 @@
 
   /* Community — per-category mood theming */
   .cat-heading{ font-size: 30px; margin-bottom: 4px; transition: all .3s ease; }
-  #section-community[data-cat-theme="For You"] .cat-heading{ font-family:'Bebas Neue',sans-serif; font-weight:400; letter-spacing:.06em; text-transform:uppercase; font-size:38px; font-style:normal;
-    background: linear-gradient(120deg,#ad515d,#43afd3); -webkit-background-clip:text; background-clip:text; color:transparent; }
   #section-community[data-cat-theme="Hollywood"] .cat-heading{ font-family:'Bebas Neue',sans-serif; font-weight:400; letter-spacing:.06em; text-transform:uppercase; font-size:38px; font-style:normal;
     background: linear-gradient(120deg,#E0263F,#F2B84B); -webkit-background-clip:text; background-clip:text; color:transparent; }
   #section-community[data-cat-theme="K-Drama"] .cat-heading{ font-family:'Fraunces',serif; font-style:italic; font-weight:600;
@@ -262,6 +259,7 @@
   .cat-tabs{ display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; margin-bottom:18px; }
   .cat-tab{ flex:none; background: var(--card); border:1px solid var(--line); color: var(--paper-dim); padding:9px 17px; border-radius: 999px; font-size:12px; font-weight:700; }
   .cat-tab.active{ border-color: transparent; color:#1a0f28; }
+  .cat-tab.active[data-arg="For You"]{ background: linear-gradient(120deg,#8B7FD9,#3FC9B0); color:#fff; }
   .cat-tab.active[data-arg="Hollywood"]{ background: linear-gradient(120deg,#E0263F,#F2B84B); }
   .cat-tab.active[data-arg="K-Drama"]{ background: linear-gradient(120deg,#FFB6D9,#B79CFF); }
   .cat-tab.active[data-arg="Anime"]{ background: linear-gradient(120deg,#FF2E88,#00D4FF); }
@@ -341,6 +339,7 @@
   .genre-chip-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
   .genre-chip{ background: var(--stub); border:1px solid var(--line-strong); color: var(--paper-dim); font-size:11.5px; font-weight:700;
     padding:6px 13px; border-radius:999px; font-family:'Space Grotesk'; }
+  .chip-subtag{ font-size:9.5px; font-weight:500; opacity:.65; text-transform:none; letter-spacing:0; }
   .genre-chip.active{ background: linear-gradient(120deg, var(--cat-1, var(--gold)), var(--cat-2, var(--crimson-bright))); color:#1a0f28; border-color: transparent; }
   .post-genres{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
   .genre-tag{ font-family:'Space Grotesk'; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;

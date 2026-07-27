@@ -126,7 +126,7 @@ function myTopCategory(){
 }
 
 const CAT_COLORS = {
-  'For You':        ['#ffffff','#94e9d9'],
+  'For You':        ['#8B7FD9','#3FC9B0'],
   'Hollywood':      ['#E0263F','#F2B84B'],
   'K-Drama':        ['#FFB6D9','#B79CFF'],
   'Anime':          ['#FF2E88','#00D4FF'],
@@ -136,7 +136,7 @@ const CAT_COLORS = {
   'Thai Drama':     ['#FF8FA3','#C6A8FF'],
   'Turkish Dizi':   ['#D7263D','#1B4B5A'],
   'Spanish Series': ['#E63946','#F4A261'],
-  'Korean Movies':  ['#45cb37','#FF3B3B'],
+  'Korean Movies':  ['#2A2A2A','#FF3B3B'],
   'Japanese Movies':['#9CAF88','#D9A5A0'],
   'Web Series':     ['#3AA6FF','#8fd7ff']
 };

@@ -1,32 +1,24 @@
 const { db } = require("../config/firebase");
 
-const usersCollection = db.collection("users");
+// Find a user using Firebase UID
+const getUserByUID = async (uid) => {
+  const doc = await db.collection("users").doc(uid).get();
 
-async function getUserByUID(uid) {
-  const doc = await usersCollection.doc(uid).get();
-
-  if (!doc.exists) return null;
+  if (!doc.exists) {
+    return null;
+  }
 
   return doc.data();
-}
+};
 
-async function getUserByUsername(username) {
-  const snapshot = await usersCollection
-    .where("username", "==", username)
-    .limit(1)
-    .get();
+// Create a new user
+const createUser = async (userData) => {
+  await db.collection("users").doc(userData.uid).set(userData);
 
-  if (snapshot.empty) return null;
-
-  return snapshot.docs[0].data();
-}
-
-async function createUser(user) {
-  await usersCollection.doc(user.uid).set(user);
-}
+  return userData;
+};
 
 module.exports = {
   getUserByUID,
-  getUserByUsername,
   createUser,
 };

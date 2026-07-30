@@ -61,4 +61,3 @@ function enterApp(){
   updateNotifBadge();
   updateMsgBadge();
 }
-

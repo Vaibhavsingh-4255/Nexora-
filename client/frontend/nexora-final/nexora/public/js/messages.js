@@ -130,18 +130,15 @@ function renderMessages(){
 
   if(creatingGroup){
     titleEl.textContent = 'New Group';
-    descEl.textContent = 'Pick people from your followers and following.';
-    const myFollowers = users[currentUser].followers || [];
-    const myFollowing = users[currentUser].following || [];
-    const candidates = [...new Set([...myFollowers, ...myFollowing])];
+    descEl.textContent = 'Pick from your followers.';
+    const candidates = users[currentUser].followers || [];
     body.innerHTML = `
       <div class="field"><label>Group name</label><input id="groupNameInput" type="text" placeholder="e.g. weekend watch club"></div>
       <div class="field"><label>Members</label>
         <div class="genre-chip-row">
-          ${candidates.length ? candidates.map(name=>{
-            const tag = myFollowers.includes(name) && myFollowing.includes(name) ? 'mutual' : myFollowers.includes(name) ? 'follows you' : 'you follow';
-            return `<button class="genre-chip ${groupSelection.includes(name)?'active':''}" data-action="toggle-group-member" data-arg="${name}" type="button">${escapeHtml(name)} <span class="chip-subtag">${tag}</span></button>`;
-          }).join('') : '<span style="font-size:12px; color:var(--paper-faint);">Follow people first to add them to a group.</span>'}
+          ${candidates.length ? candidates.map(name=>
+            `<button class="genre-chip ${groupSelection.includes(name)?'active':''}" data-action="toggle-group-member" data-arg="${name}" type="button">${escapeHtml(name)}</button>`
+          ).join('') : '<span style="font-size:12px; color:var(--paper-faint);">No followers yet — you need followers to start a group.</span>'}
         </div>
       </div>
       <div class="row" style="margin-top:14px;">

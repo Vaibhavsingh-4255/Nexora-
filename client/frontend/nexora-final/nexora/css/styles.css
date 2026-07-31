@@ -345,21 +345,43 @@
   .genre-tag{ font-family:'Space Grotesk'; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
     padding:3px 10px; border-radius:999px; border:1px solid var(--line-strong); color: var(--paper-dim); }
 
+  
   /* Swipe bottom icon navigation */
-  .icon-nav{ position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:20; display:flex; align-items:center; gap:4px;
-    background: var(--card); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border:1px solid var(--card-border);
-    padding:7px; border-radius:999px; box-shadow: 0 12px 34px -12px rgba(0,0,0,0.4); }
-  .icon-nav-btn{ position:relative; width:42px; height:42px; border-radius:50%; background:transparent; border:none;
-    display:flex; align-items:center; justify-content:center; font-size:19px; color: var(--paper-dim); transition: all .2s ease; }
+  .icon-nav{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:20; display:flex; align-items:center; gap:2px;
+    padding:8px; border-radius:999px;
+    background: linear-gradient(var(--card), var(--card)) padding-box,
+                linear-gradient(120deg, var(--gold), var(--violet), var(--crimson-bright)) border-box;
+    border: 1.5px solid transparent;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 16px 40px -14px rgba(0,0,0,0.55), 0 4px 14px -6px var(--gold); }
+  .icon-nav::before{ content:''; position:absolute; inset:1.5px; border-radius:inherit; pointer-events:none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 45%); }
+  .icon-nav-btn{ position:relative; width:44px; height:44px; border-radius:50%; background:transparent; border:none;
+    display:flex; align-items:center; justify-content:center; font-size:19px; color: var(--paper-dim);
+    transition: color .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1), background .25s ease; }
+  .icon-nav-btn:hover{ color: var(--paper); transform: translateY(-2px); background: var(--stub); }
+  .icon-nav-btn:active{ transform: translateY(0) scale(0.92); }
+  .icon-nav-btn svg, .icon-nav-fab svg{ display:block; position:relative; z-index:1; }
   .icon-nav-btn.active{ color:#1a0f28; background: linear-gradient(135deg, var(--gold), var(--crimson-bright));
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.15) inset, 0 0 18px 2px var(--gold); }
-  .icon-nav-fab{ width:46px; height:46px; border-radius:50%; border:none; margin:0 2px;
-    background: linear-gradient(135deg, var(--gold), var(--crimson-bright)); color:#1a0f28; font-size:24px; font-weight:800;
-    display:flex; align-items:center; justify-content:center; box-shadow: 0 8px 22px -6px var(--gold); }
-  .icon-nav-fab:active{ transform: scale(0.94); }
-  .icon-nav-badge{ position:absolute; top:2px; right:2px; background: linear-gradient(120deg, var(--crimson), #FF5C7A); color:#fff;
-    font-family:'Space Grotesk'; font-size:9px; font-weight:700; min-width:14px; height:14px; border-radius:999px;
-    display:flex; align-items:center; justify-content:center; padding:0 3px; }
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.18) inset, 0 4px 16px -3px var(--gold), 0 0 22px -4px var(--crimson-bright); }
+  .icon-nav-fab{ position:relative; width:50px; height:50px; border-radius:50%; border:none; margin:0 4px;
+    background: linear-gradient(135deg, var(--gold), var(--violet) 50%, var(--crimson-bright));
+    background-size:200% 200%; color:#1a0f28; font-size:24px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 10px 26px -6px var(--gold), 0 0 0 1px rgba(255,255,255,0.15) inset;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease, background-position .6s ease; }
+  .icon-nav-fab:hover{ transform: translateY(-3px) scale(1.06); background-position:100% 50%;
+    box-shadow: 0 14px 32px -8px var(--violet), 0 0 0 1px rgba(255,255,255,0.22) inset; }
+  .icon-nav-fab:hover svg{ transform: rotate(90deg); }
+  .icon-nav-fab svg{ transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+  .icon-nav-fab:active{ transform: scale(0.92); }
+  .icon-nav-badge{ position:absolute; top:1px; right:1px; background: linear-gradient(120deg, var(--crimson), #FF5C7A); color:#fff;
+    font-family:'Space Grotesk'; font-size:9px; font-weight:700; min-width:15px; height:15px; border-radius:999px;
+    display:flex; align-items:center; justify-content:center; padding:0 3px;
+    box-shadow: 0 0 0 2px var(--bg-raised), 0 2px 8px -1px rgba(255,92,122,0.6);
+    animation: badge-pop .3s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes badge-pop{ from{ transform:scale(0);} to{ transform:scale(1);} }
   .icon-nav-badge.hidden{ display:none; }
 
   /* Notification bell */

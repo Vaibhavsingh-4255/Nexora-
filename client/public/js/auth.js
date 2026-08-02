@@ -1,8 +1,3 @@
-/* NEXORA — auth.js
-   Login, signup, logout, and entering the app. */
-
-/* ===================== AUTH ===================== */
-
 function switchAuthTab(tab){
   document.getElementById('tabLogin').classList.toggle('active', tab==='login');
   document.getElementById('tabSignup').classList.toggle('active', tab==='signup');

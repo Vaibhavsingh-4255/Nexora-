@@ -1,3 +1,18 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyA5H8UV8XKBy9Y5iPKg4zl4j5pBpc-812E",
+  authDomain: "nexora-d08d9.firebaseapp.com",
+  projectId: "nexora-d08d9",
+  storageBucket: "nexora-d08d9.firebasestorage.app",
+  messagingSenderId: "631916198103",
+  appId: "1:631916198103:web:adf3458596a288b706d892"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const provider = new firebase.auth.GoogleAuthProvider();
+
+
 function switchAuthTab(tab){
   document.getElementById('tabLogin').classList.toggle('active', tab==='login');
   document.getElementById('tabSignup').classList.toggle('active', tab==='signup');
@@ -58,3 +73,49 @@ function enterApp(){
   updateMsgBadge();
 }
 
+async function googleSignIn() {
+
+  try {
+
+    const result = await auth.signInWithPopup(provider);
+
+    const firebaseUser = result.user;
+
+    const idToken = await firebaseUser.getIdToken();
+
+    const response = await fetch(
+      "http://localhost:5000/api/auth/google-login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          idToken
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+
+      currentUser = data.user.displayName;
+
+      enterApp();
+
+    } else {
+
+      alert(data.message);
+
+    }
+
+  } catch (err) {
+    console.error(err);
+
+    console.error(err.stack);
+}
+  }
+document
+.getElementById("googleLoginBtn")
+.addEventListener("click", googleSignIn);

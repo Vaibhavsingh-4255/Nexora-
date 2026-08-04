@@ -539,3 +539,94 @@
   .msg-time{ font-size:9.5px; color: var(--paper-faint); margin-top:3px; text-align:right; }
   .msg-bubble.mine .msg-time{ color: rgba(26,15,40,0.55); }
 
+
+  /* ================= LOADING SCREEN — ZORO IS SEARCHING ================= */
+  #loadingOverlay{
+    position: fixed; inset: 0; z-index: 999;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #loadingOverlay.hidden{ display:none !important; }
+
+  .loading-stage{
+    position: relative; width: 100%; max-width: 460px; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0 24px; z-index: 1;
+  }
+
+  .zoro-road{
+    position: absolute; left: 8%; right: 8%; top: 58%;
+    height: 1px; border-top: 2px dashed var(--line-strong);
+  }
+
+  /* character roams left-to-right across the road, flipping to face the way it walks */
+  .zoro-walker{
+    position: absolute; top: 58%; left: 50%;
+    transform: translate(-120px, -100%);
+    animation: zoro-roam 4.8s ease-in-out infinite;
+  }
+  @keyframes zoro-roam{
+    0%   { transform: translate(-120px, -100%) scaleX(1); }
+    45%  { transform: translate(110px, -100%) scaleX(1); }
+    50%  { transform: translate(110px, -100%) scaleX(-1); }
+    95%  { transform: translate(-120px, -100%) scaleX(-1); }
+    100% { transform: translate(-120px, -100%) scaleX(1); }
+  }
+  .zoro-bob{ animation: zoro-bob .42s ease-in-out infinite; transform-origin: 50% 100%; }
+  @keyframes zoro-bob{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-4px); } }
+
+  .zoro-leg{ transform-origin: 50% 0%; animation: zoro-step .42s ease-in-out infinite; }
+  .zoro-leg-l{ animation-delay: 0s; }
+  .zoro-leg-r{ animation-delay: .21s; }
+  @keyframes zoro-step{ 0%,100%{ transform: rotate(-14deg); } 50%{ transform: rotate(14deg); } }
+
+  .zoro-arm{ transform-origin: 82px 55px; animation: zoro-search .9s ease-in-out infinite; }
+  @keyframes zoro-search{ 0%,100%{ transform: rotate(-8deg); } 50%{ transform: rotate(10deg); } }
+
+  .zoro-sweat{ animation: zoro-sweat 1.6s ease-in-out infinite; }
+  @keyframes zoro-sweat{ 0%,80%,100%{ opacity:.9; } 40%{ opacity:0; } }
+
+  .zoro-questionmark{
+    position: absolute; top: calc(58% - 92px); left: 50%; transform: translateX(-6px);
+    font-family: 'Fraunces', serif; font-weight: 700; font-style: italic; font-size: 22px;
+    color: var(--gold); animation: zoro-qmark 2.4s ease-in-out infinite;
+  }
+  @keyframes zoro-qmark{ 0%,100%{ opacity:0; transform: translate(-6px,4px) scale(.8); } 15%,40%{ opacity:1; transform: translate(-6px,-6px) scale(1); } 55%,100%{ opacity:0; } }
+
+  .zoro-bubble{
+    position: relative; margin-top: 96px; text-align: center; max-width: 340px;
+    background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border); border-radius: 20px; padding: 18px 22px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .zoro-bubble::before{
+    content:''; position:absolute; top:-9px; left:50%; transform:translateX(-50%) rotate(45deg);
+    width:16px; height:16px; background: var(--card); border-left:1px solid var(--card-border); border-top:1px solid var(--card-border);
+  }
+  .zoro-bubble-title{
+    font-family:'Fraunces', serif; font-style: italic; font-weight:600; font-size: 18px; color: var(--paper); margin-bottom: 6px;
+  }
+  .zoro-bubble-line{
+    font-family:'Space Grotesk', monospace; font-size: 12.5px; color: var(--gold);
+    transition: opacity .2s ease; min-height: 16px;
+  }
+
+  .zoro-progress{
+    margin-top: 22px; width: 160px; height: 4px; border-radius: 999px; overflow: hidden;
+    background: var(--stub); border: 1px solid var(--line);
+  }
+  .zoro-progress-fill{
+    width: 40%; height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, var(--gold), var(--violet));
+    animation: zoro-progress-slide 1.3s ease-in-out infinite;
+  }
+  @keyframes zoro-progress-slide{
+    0%{ transform: translateX(-120%); }
+    50%{ transform: translateX(60%); }
+    100%{ transform: translateX(280%); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .zoro-walker, .zoro-bob, .zoro-leg, .zoro-arm, .zoro-sweat, .zoro-questionmark, .zoro-progress-fill{ animation: none !important; }
+  }

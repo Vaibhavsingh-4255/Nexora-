@@ -31,7 +31,11 @@ function handleLogin(){
   }
   err.textContent = '';
   currentUser = u;
-  enterApp();
+  showLoadingScreen();
+  setTimeout(()=>{
+    enterApp();
+    hideLoadingScreen();
+  }, 1200);
 }
 
 function handleSignup(){
@@ -46,7 +50,11 @@ function handleSignup(){
   userTitles[u] = [];
   err.textContent = '';
   currentUser = u;
-  enterApp();
+  showLoadingScreen();
+  setTimeout(()=>{
+    enterApp();
+    hideLoadingScreen();
+  }, 1200);
 }
 
 function logout(){
@@ -83,6 +91,14 @@ async function googleSignIn() {
 
     const idToken = await firebaseUser.getIdToken();
 
+    showLoadingScreen();
+
+    // Guard against the backend being unreachable (e.g. not running on
+    // localhost:5000) — without this the fetch below can hang forever
+    // and the app looks frozen with no feedback at all.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(()=>controller.abort(), 10000);
+
     const response = await fetch(
       "http://localhost:5000/api/auth/google-login",
       {
@@ -92,9 +108,11 @@ async function googleSignIn() {
         },
         body: JSON.stringify({
           idToken
-        })
+        }),
+        signal: controller.signal
       }
     );
+    clearTimeout(timeoutId);
 
     const data = await response.json();
 
@@ -103,19 +121,25 @@ async function googleSignIn() {
       currentUser = data.user.displayName;
 
       enterApp();
+      hideLoadingScreen();
 
     } else {
 
+      hideLoadingScreen();
       alert(data.message);
 
     }
 
   } catch (err) {
     console.error(err);
-
     console.error(err.stack);
-}
+    hideLoadingScreen();
+    const timedOut = err && err.name === 'AbortError';
+    alert(timedOut
+      ? 'Google sign-in is taking too long — the server may be unreachable. Please try again or use the demo login.'
+      : 'Could not sign in with Google right now. Please try again or use the demo login.');
   }
+}
 document
 .getElementById("googleLoginBtn")
 .addEventListener("click", googleSignIn);

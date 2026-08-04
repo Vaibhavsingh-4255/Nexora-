@@ -10,6 +10,66 @@
 </head>
 <body>
 
+<!-- ============ LOADING OVERLAY (ZORO IS SEARCHING) ============ -->
+<div id="loadingOverlay" class="hidden">
+  <div class="glow-blob" style="width:420px;height:420px; top:-120px; left:-100px; background:radial-gradient(circle, var(--gold), transparent 70%);"></div>
+  <div class="glow-blob" style="width:360px;height:360px; bottom:-140px; right:-100px; background:radial-gradient(circle, var(--violet), transparent 70%); animation-delay:-4s;"></div>
+
+  <div class="loading-stage">
+    <div class="zoro-road"></div>
+    <div class="zoro-walker" id="zoroWalker">
+      <div class="zoro-bob">
+        <svg viewBox="0 0 100 130" width="86" height="112">
+          <!-- sword fan on back -->
+          <g class="zoro-swords">
+            <rect x="46" y="18" width="5" height="58" rx="2.5" fill="#cfd6dc" transform="rotate(-18 48 55)"/>
+            <rect x="50" y="16" width="5" height="60" rx="2.5" fill="#e7ecef" transform="rotate(0 52 55)"/>
+            <rect x="54" y="18" width="5" height="58" rx="2.5" fill="#cfd6dc" transform="rotate(18 56 55)"/>
+          </g>
+          <!-- legs -->
+          <rect class="zoro-leg zoro-leg-l" x="38" y="96" width="11" height="26" rx="5" fill="#2b2f36"/>
+          <rect class="zoro-leg zoro-leg-r" x="51" y="96" width="11" height="26" rx="5" fill="#2b2f36"/>
+          <!-- body -->
+          <rect x="30" y="66" width="40" height="38" rx="15" fill="#1F6F5C"/>
+          <path d="M42 66 L50 80 L58 66 Z" fill="#f4f4f4"/>
+          <!-- arm holding magnifier -->
+          <g class="zoro-arm">
+            <rect x="66" y="70" width="10" height="26" rx="5" fill="#1F6F5C"/>
+            <circle cx="82" cy="55" r="11" fill="none" stroke="#e8c76b" stroke-width="4"/>
+            <line x1="90" y1="63" x2="97" y2="70" stroke="#e8c76b" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <rect x="20" y="70" width="10" height="24" rx="5" fill="#1F6F5C"/>
+          <!-- head -->
+          <circle cx="50" cy="42" r="25" fill="#f4c79a"/>
+          <!-- scar -->
+          <line x1="34" y1="30" x2="40" y2="46" stroke="#c98a63" stroke-width="1.6"/>
+          <line x1="37" y1="29" x2="43" y2="45" stroke="#c98a63" stroke-width="1.6"/>
+          <line x1="40" y1="28" x2="46" y2="44" stroke="#c98a63" stroke-width="1.6"/>
+          <!-- hair -->
+          <path d="M24 34 C20 8 40 6 50 14 C60 6 80 8 76 34 C68 20 60 30 58 20 C52 30 48 30 42 20 C40 30 32 20 24 34 Z" fill="#3f9b5e"/>
+          <!-- bandana -->
+          <path d="M23 27 C34 18 66 18 77 27 L74 34 C60 26 40 26 26 34 Z" fill="#12141a"/>
+          <path d="M76 29 L88 24 L84 33 L92 34 L79 40 Z" fill="#12141a"/>
+          <!-- face -->
+          <ellipse cx="41" cy="42" rx="2.6" ry="1.4" fill="#2b2016"/>
+          <path d="M56 41 q5 -3 9 0" stroke="#2b2016" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <path d="M44 53 q6 3 11 0" stroke="#2b2016" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <!-- sweat drop -->
+          <path class="zoro-sweat" d="M66 30 q3 5 0 8 q-3 -1 -3 -4 q0 -2 3 -4 Z" fill="var(--violet)"/>
+        </svg>
+      </div>
+    </div>
+    <div class="zoro-questionmark">?</div>
+
+    <div class="zoro-bubble">
+      <div class="zoro-bubble-title">Zoro is searching for your results…</div>
+      <div class="zoro-bubble-line" id="zoroLine">this may take a while, he took a wrong turn 🧭</div>
+    </div>
+
+    <div class="zoro-progress"><div class="zoro-progress-fill"></div></div>
+  </div>
+</div>
+
 <!-- ============ LANDING (LOGIN / SIGNUP) ============ -->
 <div id="view-landing">
   <div class="glow-blob" style="width:520px;height:520px; top:-140px; left:-120px; background:radial-gradient(circle, var(--gold), transparent 70%);"></div>
@@ -398,6 +458,7 @@
 
 <script src="/js/data.js"></script>
 <script src="/js/helpers.js"></script>
+<script src="/js/loading.js"></script>
 <script src="/js/theme.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/nav.js"></script>

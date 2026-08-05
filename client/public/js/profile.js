@@ -11,7 +11,8 @@ function toggleVisibility() {
             bio: "",
             publicProfile: false,
             followers: [],
-            following: []
+            following: [],
+            followRequests: []
         };
 
         users[currentUser] = u;
@@ -33,7 +34,8 @@ function renderProfile(){
             bio: "",
             publicProfile: false,
             followers: [],
-            following: []
+            following: [],
+            followRequests: []
         };
 
         users[currentUser] = u;
@@ -41,10 +43,17 @@ function renderProfile(){
     }
 
     document.getElementById('profileInitial').textContent = currentUser[0].toUpperCase();
-    document.getElementById('profileName').textContent = currentUser;
+    document.getElementById('profileName').textContent = u.name || currentUser;
     document.getElementById('profileBio').textContent = u.bio;
     document.getElementById('visLabel').textContent = u.publicProfile ? 'Public' : 'Private';
     document.getElementById('visSwitch').classList.toggle('on', u.publicProfile);
+
+    const badge = badgeById(u.badge);
+    document.getElementById('profileMetaRow').innerHTML = `
+      ${badge ? `<span class="profile-badge-pill" style="--badge-color:${badge.color};">${badge.icon} ${escapeHtml(badge.label)}</span>` : ''}
+      ${u.favoriteGenre ? `<span class="profile-genre-pill">🎬 ${escapeHtml(u.favoriteGenre)}</span>` : ''}
+    `;
+
     renderFollowStatsRow('followStatsRow', currentUser, true);
 
     const titles = userTitles[currentUser];

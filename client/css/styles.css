@@ -121,6 +121,8 @@
   .auth-tabs{ display:flex; gap:0; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
   .auth-tab{ background:none; border:none; color: var(--paper-faint); padding: 10px 4px; margin-right:24px; font-size:14.5px; font-weight:700; letter-spacing:.01em; border-bottom: 2px solid transparent; font-family:'Plus Jakarta Sans'; }
   .auth-tab.active{ color: var(--gold); border-color: var(--gold); }
+  .field-row{ display:flex; gap:12px; }
+  .field-row .field{ flex:1; min-width:0; }
   .field{ margin-bottom: 15px; }
   .field label{ display:block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--paper-faint); margin-bottom: 6px; font-family:'Space Grotesk'; }
   .field input, .field textarea, .field select{
@@ -290,6 +292,15 @@
   .switch.on .switch-dot{ left:22px; }
   .fav-grid{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
   .fav-chip{ background: var(--stub); border:1px solid var(--gold); color: var(--gold); font-size:12px; padding:6px 14px; border-radius:999px; font-weight:600; }
+
+  /* profile: badge + favorite-genre pills shown under the name */
+  .profile-meta-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .profile-badge-pill, .profile-genre-pill{
+    display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+    padding:6px 13px 6px 8px; border-radius:999px; font-family:'Space Grotesk',monospace;
+  }
+  .profile-badge-pill{ background: color-mix(in srgb, var(--badge-color, var(--gold)) 18%, transparent); border:1px solid var(--badge-color, var(--gold)); color: var(--paper); }
+  .profile-genre-pill{ background: var(--stub); border:1px solid var(--line-strong); color: var(--paper-dim); }
   .private-banner{ text-align:center; padding: 46px 20px; color: var(--paper-faint); }
   .private-banner .lock{ font-size:36px; margin-bottom:12px; }
 
@@ -560,11 +571,46 @@
     height: 1px; border-top: 2px dashed var(--line-strong);
   }
 
-  /* character roams left-to-right across the road, flipping to face the way it walks */
-  .zoro-walker{
-    position: absolute; top: 58%; left: 50%;
+  /* dust kicked up as he sprints past — loosely timed to the run cycle */
+  .zoro-dust{
+    position: absolute; top: 58%; width: 10px; height: 10px; margin-top: -3px;
+    border-radius: 50%; background: radial-gradient(circle, var(--paper-faint), transparent 70%);
+    opacity: 0; animation: zoro-dust-puff 4.8s ease-out infinite;
+  }
+  @keyframes zoro-dust-puff{
+    0%, 39%{ opacity: 0; transform: translate(0,0) scale(.3); }
+    42%{ opacity: .55; }
+    52%{ opacity: 0; transform: translate(-14px, 6px) scale(1.5); }
+    100%{ opacity: 0; }
+  }
+
+  /* speed streaks suggesting a sprint, sliding right-to-left behind the runner */
+  .zoro-speedlines{ position: absolute; top: 42%; left: 10%; right: 10%; height: 60px; overflow: hidden; pointer-events: none; }
+  .zoro-speedlines span{
+    position: absolute; left: 0; height: 2px; width: 46px; border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0; animation: zoro-speedline 1.15s linear infinite;
+  }
+  .zoro-speedlines span:nth-child(1){ top: 6%;  animation-delay: 0s; }
+  .zoro-speedlines span:nth-child(2){ top: 34%; animation-delay: .28s; }
+  .zoro-speedlines span:nth-child(3){ top: 58%; animation-delay: .52s; }
+  .zoro-speedlines span:nth-child(4){ top: 82%; animation-delay: .78s; }
+  @keyframes zoro-speedline{
+    0%{ transform: translateX(120%); opacity: 0; }
+    12%{ opacity: .65; }
+    55%{ opacity: .3; }
+    100%{ transform: translateX(-160%); opacity: 0; }
+  }
+
+  /* character sprints left-to-right across the road, flipping to face the way it runs.
+     the walker itself is just a positioning anchor — each figure (live + 2 ghosts)
+     runs the identical position keyframes but starts a beat later, so the ghosts are
+     always rendering where the live figure was a fraction of a second ago: a sprint trail. */
+  .zoro-walker{ position: absolute; top: 58%; left: 50%; }
+  .zoro-figure{
+    position: absolute; top: 0; left: 0;
     transform: translate(-120px, -100%);
-    animation: zoro-roam 4.8s ease-in-out infinite;
+    animation: zoro-roam 2.6s cubic-bezier(.45,0,.55,1) infinite;
   }
   @keyframes zoro-roam{
     0%   { transform: translate(-120px, -100%) scaleX(1); }
@@ -573,19 +619,36 @@
     95%  { transform: translate(-120px, -100%) scaleX(-1); }
     100% { transform: translate(-120px, -100%) scaleX(1); }
   }
-  .zoro-bob{ animation: zoro-bob .42s ease-in-out infinite; transform-origin: 50% 100%; }
-  @keyframes zoro-bob{ 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-4px); } }
+  .zoro-live{ animation-delay: 0s; }
+  /* trailing afterimages, phase-shifted a beat behind the live figure for a motion-blur sprint trail */
+  .zoro-ghost{ filter: blur(2px) saturate(0); }
+  .zoro-ghost-1{ opacity: .28; animation-delay: .07s; }
+  .zoro-ghost-2{ opacity: .14; filter: blur(3.5px) saturate(0); animation-delay: .14s; }
 
-  .zoro-leg{ transform-origin: 50% 0%; animation: zoro-step .42s ease-in-out infinite; }
+  .zoro-bob{ animation: zoro-bob .21s ease-in-out infinite; transform-origin: 50% 100%; }
+  @keyframes zoro-bob{ 0%,100%{ transform: translateY(0) rotate(0deg); } 50%{ transform: translateY(-6px) rotate(-3deg); } }
+
+  .zoro-leg{ transform-origin: 50% 0%; animation: zoro-step .21s ease-in-out infinite; }
   .zoro-leg-l{ animation-delay: 0s; }
-  .zoro-leg-r{ animation-delay: .21s; }
-  @keyframes zoro-step{ 0%,100%{ transform: rotate(-14deg); } 50%{ transform: rotate(14deg); } }
+  .zoro-leg-r{ animation-delay: .105s; }
+  @keyframes zoro-step{ 0%,100%{ transform: rotate(-30deg); } 50%{ transform: rotate(30deg); } }
 
-  .zoro-arm{ transform-origin: 82px 55px; animation: zoro-search .9s ease-in-out infinite; }
-  @keyframes zoro-search{ 0%,100%{ transform: rotate(-8deg); } 50%{ transform: rotate(10deg); } }
+  .zoro-arm{ transform-origin: 82px 55px; animation: zoro-search .55s ease-in-out infinite; }
+  @keyframes zoro-search{ 0%,100%{ transform: rotate(-10deg); } 50%{ transform: rotate(12deg); } }
 
   .zoro-sweat{ animation: zoro-sweat 1.6s ease-in-out infinite; }
   @keyframes zoro-sweat{ 0%,80%,100%{ opacity:.9; } 40%{ opacity:0; } }
+
+  .zoro-bandana-tail{ transform-origin: 77px 27px; animation: zoro-flutter .5s ease-in-out infinite; }
+  @keyframes zoro-flutter{ 0%,100%{ transform: rotate(0deg); } 50%{ transform: rotate(-9deg); } }
+
+  /* quick katana glint sweeping across the sword fan */
+  .zoro-glint{ animation: zoro-glint 2.6s ease-in-out infinite; transform-origin: 52px 42px; }
+  @keyframes zoro-glint{
+    0%, 82%{ opacity: 0; transform: translateX(-6px); }
+    88%{ opacity: .9; transform: translateX(0px); }
+    94%, 100%{ opacity: 0; transform: translateX(6px); }
+  }
 
   .zoro-questionmark{
     position: absolute; top: calc(58% - 92px); left: 50%; transform: translateX(-6px);
@@ -628,5 +691,55 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    .zoro-walker, .zoro-bob, .zoro-leg, .zoro-arm, .zoro-sweat, .zoro-questionmark, .zoro-progress-fill{ animation: none !important; }
+    .zoro-figure, .zoro-bob, .zoro-leg, .zoro-arm, .zoro-sweat, .zoro-questionmark, .zoro-progress-fill,
+    .zoro-dust, .zoro-speedlines span, .zoro-glint, .zoro-bandana-tail{ animation: none !important; }
+    .zoro-ghost{ display: none; }
   }
+
+  /* ================= ONBOARDING / EDIT-PROFILE MODALS ================= */
+  .modal-overlay{
+    position: fixed; inset: 0; z-index: 950;
+    background: rgba(6,6,6,0.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    display:flex; align-items:center; justify-content:center; padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.hidden{ display:none !important; }
+  body.light-mode .modal-overlay{ background: rgba(20,20,20,0.55); }
+
+  .onboard-card{
+    width:100%; max-width: 420px; max-height: 88vh; overflow-y:auto;
+    background: var(--bg-raised); border:1px solid var(--card-border); border-radius: 26px;
+    padding: 28px 24px 24px; position: relative; box-shadow: 0 24px 70px rgba(0,0,0,0.4);
+    animation: onboard-pop .22s ease;
+  }
+  @keyframes onboard-pop{ 0%{ opacity:0; transform: translateY(10px) scale(.97); } 100%{ opacity:1; transform: translateY(0) scale(1); } }
+
+  .onboard-dots{ display:flex; gap:6px; justify-content:center; margin-bottom:18px; }
+  .onboard-dot{ width:22px; height:4px; border-radius:999px; background: var(--stub); border:1px solid var(--line-strong); }
+  .onboard-dot.active{ background: var(--gold); border-color: var(--gold); }
+
+  .onboard-title{ font-family:'Fraunces', serif; font-style:italic; font-weight:600; font-size:22px; text-align:center; margin-bottom:4px; }
+  .onboard-sub{ font-size:12.5px; color: var(--paper-faint); text-align:center; margin-bottom:20px; }
+
+  .genre-pick-row{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+  .genre-pick-chip{
+    background: var(--stub); border:1px solid var(--line-strong); color: var(--paper-dim);
+    font-size:12.5px; font-weight:700; padding:9px 16px; border-radius:999px; font-family:'Space Grotesk',monospace;
+    transition: all .15s ease;
+  }
+  .genre-pick-chip.active{ background: var(--gold); color:#101214; border-color: transparent; transform: scale(1.04); }
+
+  .badge-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+  .badge-card{
+    display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center;
+    background: var(--stub); border:1.5px solid var(--line-strong); border-radius:18px; padding:14px 6px 10px;
+    transition: all .15s ease;
+  }
+  .badge-card .badge-icon{
+    width:40px; height:40px; display:flex; align-items:center; justify-content:center; font-size:19px;
+    border-radius:50%; background: color-mix(in srgb, var(--badge-color, var(--gold)) 22%, transparent);
+    border: 1.5px solid var(--badge-color, var(--gold));
+  }
+  .badge-card .badge-label{ font-size:9.5px; font-weight:700; letter-spacing:.02em; color: var(--paper-dim); line-height:1.25; text-transform:uppercase; }
+  .badge-card.selected{ border-color: var(--badge-color, var(--gold)); background: color-mix(in srgb, var(--badge-color, var(--gold)) 14%, var(--stub)); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+  .badge-card.selected .badge-label{ color: var(--paper); }

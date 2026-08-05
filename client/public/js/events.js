@@ -22,6 +22,7 @@ document.addEventListener('click', function(e){
     case 'signup': handleSignup(); break;
     case 'logout': logout(); break;
     case 'nav': switchView(arg); break;
+    case 'open-search': openSearchView(); break;
     case 'toggle-add-form': toggleAddForm(); break;
     case 'add-title': addTitle(); break;
     case 'status-pill': setStatusFilter(arg); break;
@@ -53,6 +54,7 @@ document.addEventListener('click', function(e){
     case 'toggle-follow': toggleFollow(); break;
     case 'open-follow-list': openFollowList(arg, el.dataset.username); break;
     case 'back-from-follow-list': backFromFollowList(); break;
+    case 'back-from-search': backFromSearch(); break;
     case 'message-user': messageUser(); break;
     case 'new-group': startNewGroup(); break;
     case 'cancel-new-group': cancelNewGroup(); break;
@@ -61,6 +63,19 @@ document.addEventListener('click', function(e){
     case 'open-conversation': openConversation(id); break;
     case 'back-to-conversations': backToConversationList(); break;
     case 'send-message': sendMessage(); break;
+    case 'onboard-next-account': onboardNextAccount(); break;
+    case 'onboard-next-genre': onboardNextGenre(); break;
+    case 'onboard-finish': onboardFinish(); break;
+    case 'onboard-pick-genre': onboardPickGenre(arg); break;
+    case 'onboard-pick-badge': onboardPickBadge(arg); break;
+    case 'open-edit-profile': openEditProfile(); break;
+    case 'close-edit-profile': closeEditProfile(); break;
+    case 'save-edit-profile': saveEditProfile(); break;
+    case 'edit-pick-genre': editPickGenre(arg); break;
+    case 'edit-pick-badge': editPickBadge(arg); break;
+    case 'accept-follow-request': acceptFollowRequest(arg); break;
+    case 'decline-follow-request': declineFollowRequest(arg); break;
+    case 'follow-from-search': toggleFollowFromSearch(arg); break;
   }
 });
 
@@ -78,6 +93,7 @@ document.addEventListener('change', function(e){
 
 document.addEventListener('input', function(e){
   if(e.target.id === 'catSearch'){ handleCategorySearch(e.target.value); }
+  if(e.target.id === 'peopleSearchInput'){ renderPeopleSearchResults(); }
 });
 
 document.addEventListener('keydown', function(e){

@@ -2,7 +2,7 @@
    Section switching + swipe-between-sections gesture handling. */
 
 /* ===================== NAV ===================== */
-const EXTRA_SECTIONS = ['user-profile','followlist'];
+const EXTRA_SECTIONS = ['user-profile','followlist','search'];
 const ALL_SECTIONS = [...VIEW_ORDER, ...EXTRA_SECTIONS];
 
 function switchView(view){
@@ -20,6 +20,7 @@ function switchView(view){
   if(view==='profile') renderProfile();
   if(view==='user-profile') renderUserProfile();
   if(view==='followlist') renderFollowList();
+  if(view==='search') renderPeopleSearchResults();
   if(view!=='community') applyPageTheme();
 }
 

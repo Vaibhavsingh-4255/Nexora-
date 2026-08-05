@@ -14,11 +14,11 @@ const users = {
   demo: {
     username:'demo', password:'demo123',
     bio:'Currently juggling three K-dramas and a Turkish dizi. Send help (and recs).',
-    publicProfile:true, followers:['reelwatcher','nightowl_ott'], following:['popcorn_diaries']
+    publicProfile:true, followers:['reelwatcher','nightowl_ott'], following:['popcorn_diaries'], followRequests:[]
   },
-  reelwatcher:     { username:'reelwatcher',     password:'demo123', bio:'Always mid-rewatch of something.', publicProfile:true, followers:[], following:['demo'] },
-  nightowl_ott:    { username:'nightowl_ott',    password:'demo123', bio:'Late night streaming, spoiler-free zone.', publicProfile:true, followers:[], following:['demo'] },
-  popcorn_diaries: { username:'popcorn_diaries', password:'demo123', bio:'Reviews with too many exclamation marks.', publicProfile:false, followers:['demo'], following:[] },
+  reelwatcher:     { username:'reelwatcher',     password:'demo123', bio:'Always mid-rewatch of something.', publicProfile:true, followers:[], following:['demo'], followRequests:[] },
+  nightowl_ott:    { username:'nightowl_ott',    password:'demo123', bio:'Late night streaming, spoiler-free zone.', publicProfile:true, followers:[], following:['demo'], followRequests:[] },
+  popcorn_diaries: { username:'popcorn_diaries', password:'demo123', bio:'Reviews with too many exclamation marks.', publicProfile:false, followers:['demo'], following:[], followRequests:[] },
 };
 
 const userTitles = { demo: [] };
@@ -66,9 +66,19 @@ const posts = [];
 const notifications = [];
 function pushNotification(forUser, fromUser, post, comment){
   notifications.unshift({
-    id: nextId(), forUser, fromUser, postId: post.id, postTitle: post.title, category: post.category,
+    id: nextId(), type:'comment', forUser, fromUser, postId: post.id, postTitle: post.title, category: post.category,
     snippet: comment.text.length>60 ? comment.text.slice(0,60)+'…' : comment.text,
     read:false, createdAt: Date.now()
+  });
+}
+function pushFollowRequestNotification(forUser, fromUser){
+  notifications.unshift({
+    id: nextId(), type:'follow_request', forUser, fromUser, read:false, createdAt: Date.now()
+  });
+}
+function pushFollowAcceptedNotification(forUser, fromUser){
+  notifications.unshift({
+    id: nextId(), type:'follow_accepted', forUser, fromUser, read:false, createdAt: Date.now()
   });
 }
 function updateNotifBadge(){

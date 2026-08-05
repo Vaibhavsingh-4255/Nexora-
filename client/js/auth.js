@@ -41,20 +41,25 @@ function handleLogin(){
 function handleSignup(){
   const u = document.getElementById('suUser').value.trim();
   const p = document.getElementById('suPass').value;
+  const email = document.getElementById('suEmail').value.trim();
+  const name = document.getElementById('suName').value.trim();
+  const gender = document.getElementById('suGender').value;
+  const birthday = document.getElementById('suBirthday').value;
   const bio = document.getElementById('suBio').value.trim();
   const err = document.getElementById('signupError');
   if(!u || !p){ err.textContent = 'Username and password are both required.'; return; }
   if(p.length < 4){ err.textContent = 'Password needs at least 4 characters.'; return; }
   if(users[u]){ err.textContent = 'That username is already taken.'; return; }
-  users[u] = { username:u, password:p, bio: bio || 'New to nexora.', publicProfile:false, followers:[], following:[] };
+  if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent = 'Enter a valid email address.'; return; }
+
+  users[u] = {
+    username:u, password:p, email: email || '', name: name || u, gender: gender || '', birthday: birthday || '',
+    bio: bio || 'New to nexora.', publicProfile:false, followers:[], following:[], followRequests:[]
+  };
   userTitles[u] = [];
   err.textContent = '';
-  currentUser = u;
-  showLoadingScreen();
-  setTimeout(()=>{
-    enterApp();
-    hideLoadingScreen();
-  }, 1200);
+  // account created — finish with the quick favorite-genre + badge picker before entering the app
+  openOnboarding('signup', { username: u });
 }
 
 function logout(){
@@ -65,6 +70,10 @@ function logout(){
   document.getElementById('loginPass').value='';
   document.getElementById('suUser').value='';
   document.getElementById('suPass').value='';
+  document.getElementById('suEmail').value='';
+  document.getElementById('suName').value='';
+  document.getElementById('suGender').value='';
+  document.getElementById('suBirthday').value='';
   document.getElementById('suBio').value='';
   switchAuthTab('login');
   applyPageTheme();
@@ -118,10 +127,16 @@ async function googleSignIn() {
 
     if (data.success) {
 
-      currentUser = data.user.displayName;
-
-      enterApp();
-      hideLoadingScreen();
+      if (!data.user.username) {
+        // first-time Google sign-in — collect the rest of the profile before entering the app
+        onboardGooglePayload = { uid: data.user.uid, email: data.user.email, photoURL: data.user.photoURL };
+        hideLoadingScreen();
+        openOnboarding('google', { name: data.user.displayName || '' });
+      } else {
+        currentUser = data.user.username;
+        enterApp();
+        hideLoadingScreen();
+      }
 
     } else {
 
@@ -142,4 +157,8 @@ async function googleSignIn() {
 }
 document
 .getElementById("googleLoginBtn")
+.addEventListener("click", googleSignIn);
+
+document
+.getElementById("googleSignupBtn")
 .addEventListener("click", googleSignIn);

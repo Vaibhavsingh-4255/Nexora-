@@ -18,7 +18,16 @@ const createUser = async (userData) => {
   return userData;
 };
 
+// Merge additional profile fields onto an existing user doc
+const updateUser = async (uid, updates) => {
+  await db.collection("users").doc(uid).set(updates, { merge: true });
+
+  const doc = await db.collection("users").doc(uid).get();
+  return doc.data();
+};
+
 module.exports = {
   getUserByUID,
   createUser,
+  updateUser,
 };

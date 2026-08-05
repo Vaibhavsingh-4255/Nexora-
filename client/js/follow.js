@@ -13,6 +13,10 @@ function isFollowing(viewer, target){
   const t = users[target];
   return !!(t && t.followers && t.followers.includes(viewer));
 }
+function hasPendingRequest(viewer, target){
+  const t = users[target];
+  return !!(t && t.followRequests && t.followRequests.includes(viewer));
+}
 
 function viewProfile(username){
   if(username === currentUser){ switchView('profile'); return; }
@@ -27,15 +31,47 @@ function toggleFollow(){
   const target = users[viewedProfileUser];
   if(!target) return;
   const me = users[currentUser];
-  const already = target.followers.includes(currentUser);
-  if(already){
+  target.followRequests = target.followRequests || [];
+
+  const alreadyFollowing = target.followers.includes(currentUser);
+  const pending = target.followRequests.includes(currentUser);
+
+  if(alreadyFollowing){
+    // unfollow
     target.followers = target.followers.filter(u=>u!==currentUser);
     me.following = me.following.filter(u=>u!==viewedProfileUser);
-  } else {
+  } else if(pending){
+    // withdraw the pending request
+    target.followRequests = target.followRequests.filter(u=>u!==currentUser);
+  } else if(target.publicProfile){
+    // public account — follow right away
     target.followers.push(currentUser);
     me.following.push(viewedProfileUser);
+  } else {
+    // private account — send a follow request for them to accept
+    target.followRequests.push(currentUser);
+    pushFollowRequestNotification(viewedProfileUser, currentUser);
+    updateNotifBadge();
   }
   renderUserProfile();
+}
+
+function acceptFollowRequest(fromUser){
+  const me = users[currentUser];
+  const requester = users[fromUser];
+  if(!me || !requester) return;
+  me.followRequests = (me.followRequests||[]).filter(u=>u!==fromUser);
+  if(!me.followers.includes(fromUser)) me.followers.push(fromUser);
+  if(!requester.following.includes(currentUser)) requester.following.push(currentUser);
+  pushFollowAcceptedNotification(fromUser, currentUser);
+  renderNotifications();
+  renderFollowStatsRow('followStatsRow', currentUser, true);
+}
+function declineFollowRequest(fromUser){
+  const me = users[currentUser];
+  if(!me) return;
+  me.followRequests = (me.followRequests||[]).filter(u=>u!==fromUser);
+  renderNotifications();
 }
 
 function renderFollowStatsRow(elId, username, onOwnProfile){
@@ -61,10 +97,11 @@ function renderUserProfile(){
   renderFollowStatsRow('uFollowStatsRow', username, false);
 
   const following = isFollowing(currentUser, username);
+  const pending = hasPendingRequest(currentUser, username);
   const followBtn = document.getElementById('followActionBtn');
-  followBtn.textContent = following ? 'Following ✓' : 'Follow';
-  followBtn.classList.toggle('btn-ghost', following);
-  followBtn.classList.toggle('btn-primary', !following);
+  followBtn.textContent = following ? 'Following ✓' : pending ? 'Requested' : 'Follow';
+  followBtn.classList.toggle('btn-ghost', following || pending);
+  followBtn.classList.toggle('btn-primary', !following && !pending);
 
   const body = document.getElementById('uProfileBody');
   const canSeeFullProfile = u.publicProfile || following;

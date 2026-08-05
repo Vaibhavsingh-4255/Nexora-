@@ -1,0 +1,47 @@
+/* ===========================
+   TRACKER V2
+=========================== */
+
+.tracker-search{
+    width:100%;
+    margin:22px 0 28px;
+}
+
+.tracker-search input{
+
+    width:100%;
+
+    height:56px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:18px;
+
+    padding:0 22px;
+
+    font-size:16px;
+
+    background:#151515;
+
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    transition:.25s;
+}
+
+.tracker-search input::placeholder{
+
+    color:#7f7f7f;
+
+}
+
+.tracker-search input:focus{
+
+    border-color:#72E2EC;
+
+    box-shadow:0 0 0 3px rgba(114,226,236,.15);
+
+}
